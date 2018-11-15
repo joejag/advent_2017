@@ -1,4 +1,4 @@
-const sum = require('./index')
+import { sum } from './index'
 
 test('1122 produces a sum of 3 (1 + 2)', () => {
   expect(sum(1122)).toBe(3)
