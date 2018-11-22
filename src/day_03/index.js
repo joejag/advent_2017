@@ -7,38 +7,28 @@ export const manhattenDistanceToCenter = (cords) => {
 }
 
 export const spiralCordinatesFor = (number) => {
-  let xPosiition = 0
-  let yPosiition = 0
-  let movesLeft = number - 1
   let spiralDepth = 0
   let moves = []
+  const routeTaken = [{ number: 1, x: 0, y: 0 }]
 
-  while (movesLeft > 0) {
+  while (_.last(routeTaken).number !== number) {
     if (moves.length === 0) {
       spiralDepth++
       moves = _.flattenDeep([
-        _.times(1, _.constant('R')),
-        _.times((spiralDepth * 2) - 1, _.constant('U')),
-        _.times(spiralDepth * 2, _.constant('L')),
-        _.times(spiralDepth * 2, _.constant('D')),
-        _.times(spiralDepth * 2, _.constant('R'))
+        _.times(1, _.constant((x, y) => ({ x: x + 1, y: y }))),
+        _.times((spiralDepth * 2) - 1, _.constant((x, y) => ({ x: x, y: y + 1 }))),
+        _.times(spiralDepth * 2, _.constant((x, y) => ({ x: x - 1, y: y }))),
+        _.times(spiralDepth * 2, _.constant((x, y) => ({ x: x, y: y - 1 }))),
+        _.times(spiralDepth * 2, _.constant((x, y) => ({ x: x + 1, y: y })))
       ])
     }
 
-    const nextMove = moves.shift()
-
-    if (nextMove === 'R') {
-      xPosiition++
-    } else if (nextMove === 'U') {
-      yPosiition++
-    } else if (nextMove === 'L') {
-      xPosiition--
-    } else if (nextMove === 'D') {
-      yPosiition--
-    }
-
-    movesLeft--
+    const previousPosition = _.last(routeTaken)
+    const newPosition = moves.shift()(previousPosition.x, previousPosition.y)
+    routeTaken.push({ number: previousPosition.number + 1, x: newPosition.x, y: newPosition.y })
   }
 
-  return [xPosiition, yPosiition]
+  // console.log('got here by', routeTaken)
+
+  return [_.last(routeTaken).x, _.last(routeTaken).y]
 }
